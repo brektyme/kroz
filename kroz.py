@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
+#kroz a terribly written "game"
 import sys, os, time
 
 name = ""
