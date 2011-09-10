@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-import sys
-import os
-import time
+import sys, os, time
 
 name = ""
 health = 20
