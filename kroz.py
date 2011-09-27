@@ -3,14 +3,15 @@
 #kroz a terribly written "game"
 import sys, os, time, csv, re
 
-        
+#Clears the terminal screen, the os call is for cross
+#platform-ness
 def clear():
   if(os.name == "nt"):
     os.system("cls")
   else:
     os.system("clear")
 
-
+#opens the game data file
 def open_File(filename):
     try:
         open(filename, 'r')
@@ -20,6 +21,7 @@ def open_File(filename):
         sys.exit(1)
     return(open(filename, 'r'))
 
+#opens the game data csv file
 def open_csv(txt_file):
     txt_file.seek(0, 0)
     return(csv.DictReader(txt_file, delimiter=','))
@@ -31,6 +33,7 @@ def location_Line(csv_DR, txt_file, location):
         line = next(csv_DR)
     return(line)
 
+#function that uses regex to populate game with player name
 def insert_Name(line, name):
     name_re = re.compile("\$name")
     if(name_re.match(line['Text'])):
@@ -47,18 +50,17 @@ def parse_DST_Choices(line, key, delimiter=', '):
             i += 1
     return(parse)
 
-
-
+#function that obtains player name
 def get_Name(name):
     ans = ""
     ans_re = re.compile("^yes$|^no$", re.I)
     while(ans != "yes"):
         name = input("%s: " %("What is your name?"))
         clear()
-        ans = input("%s %s\t%s: " %("Your name is", name,"Is this correct? (Yes\\No)")).lower()
+        ans = input("%s %s\t%s: " %("Your name is",name+".","\nIs this correct? (Yes\\No)")).lower()
         while(not ans_re.match(ans)):
             print("Please enter yes or no")
-            ans = input("%s: %s\t%s: " %("Your name is", name, "Is this correct? (Yes\\No")).lower()
+            ans = input("%s: %s\t%s: " %("Your name is",name+".", "\nIs this correct? (Yes\\No")).lower()
     return(name)
 
 def put_Menu(line, location, name):
@@ -88,22 +90,20 @@ def put_Menu(line, location, name):
         if(choice not in choices):
             print("%s\n" %("I didn't understand your selection."))
     print(choice)
-    
 
-
-    
-
-
-    
-
+### Main Function###
 
 def main():
+    #Player name, entered by player
     name = ""
+    #Player health, starting health is 20
     health = 20
+    #inventory array, initially empty
     inventory = []
     enter = ""
     direction = ""
     act = ""
+    #Location of the csv file containing the game data
     filename = 'kroz.csv'
     txt_file = None
     csv_DR = None
@@ -115,5 +115,7 @@ def main():
 
     name = get_Name(name)
     put_Menu((location_Line(csv_DR, txt_file, 'intro')), 'intro', name)
+
+###Main Function Entry###
 
 main()
