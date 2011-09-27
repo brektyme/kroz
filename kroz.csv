@@ -1,0 +1,12 @@
+"Location","Text","Question","Choices","Required Items","Destination"
+"intro","$name, you find yourself at the mouth of a cave. The entrance to the cave is poorly lit, but there is enough light to see.","Will you enter the cave?","Yes, No",,"firstroom, nofun"
+"cavemouth","You are back at the mouth of the cave.","Do you dare to re-enter?","Yes, No",,"firstroom, nofun"
+"firstroom","You have entered the cave. The cave seems to go on for quite a while. There are stalagmites near  your left and a small stream, that seems to be coming from a spring on your right.","Which way will you go?","North, South, West",,"cavemouth, firstroom, darkroom, lamproom"
+"lamproom","This part of the cave is dark, but you can barely make out a few objects. The smell of kerosene is thick in the air. You see a small lamp next to your feet. It appears to have fuel left in it. Curious, why would there be a lamp here? ","What will you do?","Lamp, East, West",,"firstroom, deathroom, lamp"
+"lamproomA","This part of the cave was once dark, but now it is lit up brilliantly by the light of the lamp to which you have just picked up. Awesome!","Which way will you go?","Lamp, East, West",,"firstroom, deathroom, lampA"
+"nofun","You sir are no fun!",,,,"end"
+"deathroom","A rotten stench fills your nose as you enter this area of the cave. Suddenly out of nowhere something hits you on the head. You start to black out as you see a hideous monster lower its head toward your midsection.",,,,"end"
+"darkroom","With the light of your lamp, you can see drawings on the wall of this part of the cave. You wonder at what appears to ancient cave drawings. Thoroughly satisfying your thirst for adventure, you return home. You long remember your adventure in the cave, and wonder when you will return. ",,,"lamp","end"
+"lamp","You pick up the lamp.","What will you do?","Lamp, East, West",,"lamproomA"
+"lampA","Maybe you shouldn't have eaten that mushroom. It appears your eyes doth deceive you!","Which way will you go?","Lamp, East, West",,"firstroom, deathroom, lampA"
+"end","This adventure was brought to you by Airencracken, and Brektyme. Crew 711 for life!",,,,
