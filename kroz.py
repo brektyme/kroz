@@ -1,141 +1,119 @@
 #!/usr/bin/env python
 
 #kroz a terribly written "game"
-import sys, os, time
+import sys, os, time, csv, re
 
-name = ""
-health = 20
-inventory = []
-enter = ""
-direction = ""
-act = ""
-
+        
 def clear():
   if(os.name == "nt"):
     os.system("cls")
   else:
     os.system("clear")
 
-def intro():
-  clear()
-  print('Hello traveler! What is your name?')
-  name = input()
-  clear()
-  print(name + ', you find yourself at the mouth of a cave.')
-  print('The entrance to the cave is poorly lit, but there is enough light to see.')
-  print('Will you enter the cave?')
-  enter = input().lower()
 
-  while (enter != "yes" and enter != "no"):
-    print('I did not understand you. Please try again')
-    enter = input().lower()
+def open_File(filename):
+    try:
+        open(filename, 'r')
 
-  if (enter == 'yes'):
-    firstroom()
-  elif(enter == "no"):
-    print('You\'re no fun')
-    time.sleep(2)
-    sys.exit()
+    except IOError:
+        print("%s, %s\n" %("Unable to open", filename))
+        sys.exit(1)
+    return(open(filename, 'r'))
 
-#def dir():
-#  direction = input()
-#  while (direction != "north" and direction != "south" and direction != "east" and direction != "west"):
-#    print('I did not understand you. Please try again')
-#    direction = input()
+def open_csv(txt_file):
+    txt_file.seek(0, 0)
+    return(csv.DictReader(txt_file, delimiter=','))
 
-def cavemouth():
-  clear()
-  print('You are back at the mouth of the cave')
-  print('Re-enter?')
-  enter = input().lower()
+def location_Line(csv_DR, txt_file, location):
+    txt_file.seek(0, 0)
+    line = next(csv_DR)
+    while(line['Location'] != location):
+        line = next(csv_DR)
+    return(line)
 
-  while(enter != "yes" and enter != "no"):
-    print('I did not understand you. Please try again')
-    enter = input().lower()
+def insert_Name(line, name):
+    name_re = re.compile("\$name")
+    if(name_re.match(line['Text'])):
+        line['Text'] = name_re.sub(name, line['Text'])
+    return(line)
 
-  if(enter == "yes"):
-    firstroom()
-  elif(enter == "no"):
-    sys.exit()
+def parse_DST_Choices(line, key, delimiter=', '):
+    parse = None
+    if(line[key] != ""):
+        i = 0
+        parse = line[key].split(delimiter)
+        while i < len(parse):
+            parse[i] = parse[i].lower()
+            i += 1
+    return(parse)
 
-def firstroom():
-  clear()
-  print('You have entered the cave.')
-  print('The cave seems to go on for quite a while.')
-  print('There are stalagmites near your left and a small stream')
-  print('that seems to be coming from a spring on your right.')
-  print('You see exits north, south, and west')
-  print('Which way will you go? (go direction)')
-  direction = input().lower()
-  while (direction != "go north" and direction != "go south" and direction != "go west"):
-    print('I did not understand you. Please try again')
-    direction = input().lower()
-  if (direction == "go south"):
-    cavemouth()
-  elif (direction == "go north" and 'lamp' not in inventory):
-    print('It is too dark to see, you turn back.')
-    time.sleep(2)
-    firstroom()
-  elif (direction == "go north" and 'lamp' in inventory):
-    darkroom()
-  elif (direction == "go west"):
-    lamproom()
-  else:
-    print('That is not possible')
-    time.sleep(2)
-    firstroom()
 
-#def action():
-#  act = input()
-#  while(act != 'attack' and act != 'get' and act != 'go'):
-#    print('You cannot do that!')
-#    print('What would you do?')
-#    act = input()
 
-def lamproom():
-  clear()
-  print('This part of the cave is dark, but you can barely make out a few objects.')
-  print('The smell of kerosene is thick in the air.')
-  print('You see a small lamp next to your feet. It appears to have fuel left in it.')
-  print('Curious, why would there be a lamp here')
-  print('You see exits east and west')
-  print('What will you do? (go direction/get item)')
-  #action()
-  act = input().lower()
-  if (act == "get lamp"):
-    inventory.append('lamp')
-    print('You got a lamp!')
-    time.sleep(2)
-    lamproom()
-  elif (act == "go east"):
-    firstroom()
-  elif (act == "go west" and 'lamp' not in inventory):
-    print('It is too dark to continue that way.')
-    time.sleep(2)
-    lamproom()
-  elif (act == "go west" and 'lamp' in inventory):
-    deathroom()
-  else:
-    print('I didn\'t understand you.')
-    time.sleep(2)
-    lamproom()
+def get_Name(name):
+    ans = ""
+    ans_re = re.compile("^yes$|^no$", re.I)
+    while(ans != "yes"):
+        name = input("%s: " %("What is your name?"))
+        clear()
+        ans = input("%s %s\t%s: " %("Your name is", name,"Is this correct? (Yes\\No)")).lower()
+        while(not ans_re.match(ans)):
+            print("Please enter yes or no")
+            ans = input("%s: %s\t%s: " %("Your name is", name, "Is this correct? (Yes\\No")).lower()
+    return(name)
 
-def darkroom():
-  clear()
-  print('With the light of your lamp, you can see drawings on the wall of this part of the cave.')
-  print('You see what looks to be ancient cave drawings.')
-  print('Satisfied with your adventure, you return home.')
-  time.sleep(2)
-  sys.exit()
+def put_Menu(line, location, name):
+    clear()
 
-def deathroom():
-  clear()
-  print('A rotten stench fills your nose as you enter this area of the cave.')
-  print('Suddenly out of nowhere something hits you on the head.')
-  print('You start to black out as you see a hideous monster lower its head toward your midsection.')
-  print('\n' + 'You have died.')
-  time.sleep(2)
-  sys.exit()
-################################
+    line = insert_Name(line, name)
+    choices = parse_DST_Choices(line, 'Choices')
+    text = line['Text']
+    destinations = parse_DST_Choices(line, 'Destination')
+    question = line['Question']
+    choice_dict = {}
+    choice = None
+    print(choices)
 
-intro()
+
+    if (len(choices) == len(destinations)):
+        i = 0
+        while i < len(choices):
+            print(i)
+            choice_dict[choices[i]] = destinations[i]
+            i += 1
+
+    print("%s\n" %(text))
+    
+    while(choice not in choices):
+        choice = input("%s\n%s" %(question, choices))
+        if(choice not in choices):
+            print("%s\n" %("I didn't understand your selection."))
+    print(choice)
+    
+
+
+    
+
+
+    
+
+
+def main():
+    name = ""
+    health = 20
+    inventory = []
+    enter = ""
+    direction = ""
+    act = ""
+    filename = 'kroz.csv'
+    txt_file = None
+    csv_DR = None
+    txt_line = None
+
+    clear()
+    txt_file = open_File(filename)
+    csv_DR = open_csv(txt_file)
+
+    name = get_Name(name)
+    put_Menu((location_Line(csv_DR, txt_file, 'intro')), 'intro', name)
+
+main()
