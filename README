@@ -2,3 +2,9 @@ This code is bad and I should feel bad.
 
 (Seriously, it's terrible. I wrote in a very short amount of time
 with very little knowledge of python.)
+
+Now with Josh helping, we're attempting to make this into a semi-usable framework for small python
+text-based adventures.
+
+Currently the plan is to use a directed graph with edges that represent the cardinal directions used
+in the game, it's also possible that other directions (up,down,right,left) could be added.
