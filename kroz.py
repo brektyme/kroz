@@ -21,11 +21,12 @@ def open_File(filename):
         sys.exit(1)
     return(open(filename, 'r'))
 
-#opens the game data csv file
+#opens the game data csv object 
 def open_csv(txt_file):
     txt_file.seek(0, 0)
     return(csv.DictReader(txt_file, delimiter=','))
 
+#returns the current locations line. In the form of a hash
 def location_Line(csv_DR, txt_file, location):
     txt_file.seek(0, 0)
     line = next(csv_DR)
@@ -40,6 +41,7 @@ def insert_Name(line, name):
         line['Text'] = name_re.sub(name, line['Text'])
     return(line)
 
+#Parses and returns either the Choices or Destinations from the CSV in the form of a hash
 def parse_DST_Choices(line, key, delimiter=', '):
     parse = None
     if(line[key] != ""):
@@ -50,7 +52,7 @@ def parse_DST_Choices(line, key, delimiter=', '):
             i += 1
     return(parse)
 
-#function that obtains player name
+#function that obtains player name. Need to expand the regex to accept Y or N both upper and lower for an answer.
 def get_Name(name):
     ans = ""
     ans_re = re.compile("^yes$|^no$", re.I)
@@ -63,6 +65,7 @@ def get_Name(name):
             ans = input("%s: %s\t%s: " %("Your name is",name+".", "\nIs this correct? (Yes\\No")).lower()
     return(name)
 
+#The function for interaction with the user. NO ACTUAL GAME PLAY SHOULD HAPPEN HERE. Only presenting the user with the current text and choices. It should return the users choice. 
 def put_Menu(line, location, name):
     clear()
 
@@ -114,7 +117,9 @@ def main():
     csv_DR = open_csv(txt_file)
 
     name = get_Name(name)
-    put_Menu((location_Line(csv_DR, txt_file, 'intro')), 'intro', name)
+
+    print(location_Line(csv_DR, txt_file, 'intro'))
+    #put_Menu((location_Line(csv_DR, txt_file, 'intro')), 'intro', name)
 
 ###Main Function Entry###
 
